@@ -1,0 +1,22 @@
+package javacourse;
+
+import javacourse.controller.ConsoleController;
+import javacourse.service.ParcelFillTruckService;
+import javacourse.util.CsvParser;
+import javacourse.util.CsvReader;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class Main {
+    public static void main(String[] args) {
+        log.info("Стартуем приложение...");
+        Main.start();
+    }
+
+    private static void start() {
+        ConsoleController consoleController = new ConsoleController(
+                new ParcelFillTruckService(),
+                new CsvParser(new CsvReader()));
+        consoleController.listen();
+    }
+}

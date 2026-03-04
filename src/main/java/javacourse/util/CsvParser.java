@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CsvParser {
     private final CsvReader csvReader;
-    private static final String parcelsRegex = "1\\r\\n|22\\r\\n|333\\r\\n|4444\\r\\n|55555\\r\\n|666\\r\\n666\\r\\n|777\\r\\n7777\\r\\n|8888\\r\\n8888\\r\\n|999\\r\\n999\\r\\n999\\r\\n";
+    private static final String parcelsRegex = "1\\r?\\n?|22\\r?\\n?|333\\r?\\n?|4444\\r?\\n?|55555\\r?\\n?|666\\r\\n666\\r?\\n?|777\\r\\n7777\\r?\\n?|8888\\r\\n8888\\r?\\n?|999\\r\\n999\\r\\n999\\r?\\n?";
 
     public List<Parcel> parse(String filePath) {
         String fileContent = csvReader.readAll(filePath);
@@ -47,9 +47,11 @@ public class CsvParser {
                             break;
                     }
                     return Parcel.builder()
-                            .Level1(level[0])
-                            .Level2(level[1])
-                            .Level3(level[2])
+                            .level1(level[0])
+                            .level2(level[1])
+                            .level3(level[2])
+                            .height(parcelLevel.length)
+                            .width(level[0].length())
                             .build();
                 })
                 .collect(Collectors.toList());

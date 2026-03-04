@@ -1,7 +1,7 @@
 package javacourse.controller;
 
 import javacourse.domain.Parcel;
-import javacourse.service.ParcelFillTruckService;
+import javacourse.service.TruckParcelLoaderTower;
 import javacourse.util.CsvParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 public class ConsoleController {
-    private final ParcelFillTruckService parcelFillTruckService;
+    private final TruckParcelLoaderTower truckParcelLoaderTower;
     private final CsvParser csvParser;
-    private final Pattern IMPORT_COMMAND_PATTERN = Pattern.compile("import (.+\\.csv)");
+    private final Pattern IMPORT_COMMAND_PATTERN = Pattern.compile("import (.+\\..+)");
 
     public void listen() {
         var scanner = new Scanner(System.in);
-        log.info("Укажите путь к файлу");
+        log.info("Укажите путь к файлу в формате 'import {Полный путь и имя файла}'");
         while(scanner.hasNextLine()){
             String command = scanner.nextLine();
             if (command.equals("exit")) {
@@ -36,7 +36,7 @@ public class ConsoleController {
                         log.warn("В файле {} не передана ни одна посылка согласно шаблону", filePath);
                     } else {
                         log.info("Получен список посылок");
-                        parcelFillTruckService.showTrucks(parcelFillTruckService.fillTruck(parcels));
+                        truckParcelLoaderTower.showTrucks(truckParcelLoaderTower.loadTruck(parcels));
                     }
                 }
             }

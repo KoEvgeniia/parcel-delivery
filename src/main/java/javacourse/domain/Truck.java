@@ -1,24 +1,26 @@
 package javacourse.domain;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 @Builder
 public class Truck {
-    public String Level1;
-    public String Level2;
-    public String Level3;
-    public String Level4;
-    public String Level5;
-    public String Level6;
+    private String level1;
+    private String level2;
+    private String level3;
+    private String level4;
+    private String level5;
+    private String level6;
 
     @Override
     public String toString() {
-        return "+" + this.Level6 + "+\n"
-                + "+" + this.Level5 + "+\n"
-                + "+" + this.Level4 + "+\n"
-                + "+" + this.Level3 + "+\n"
-                + "+" + this.Level2 + "+\n"
-                + "+" + this.Level1 + "+\n"
+        return "+" + this.level6 + "+\n"
+                + "+" + this.level5 + "+\n"
+                + "+" + this.level4 + "+\n"
+                + "+" + this.level3 + "+\n"
+                + "+" + this.level2 + "+\n"
+                + "+" + this.level1 + "+\n"
                 + "++++++++\n";
     }
 }

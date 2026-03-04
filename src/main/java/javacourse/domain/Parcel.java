@@ -1,10 +1,14 @@
 package javacourse.domain;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 @Builder
 public class Parcel {
-    public String Level1;
-    public String Level2;
-    public String Level3;
+    private String level1;
+    private String level2;
+    private String level3;
+    private int height;
+    private int width;
 }

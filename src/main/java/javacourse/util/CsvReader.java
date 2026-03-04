@@ -2,17 +2,15 @@ package javacourse.util;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 @Slf4j
 public class CsvReader {
 
     public String readAll(String filePath) {
         try {
-            Path path = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filePath)).toURI()).toPath();
+            Path path = Path.of(filePath);
             if (Files.exists(path)) {
                 log.info("Чтение файла {}", filePath);
                 return Files.readString(path);

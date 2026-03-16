@@ -25,33 +25,19 @@ public class CsvParser {
         Pattern pattern = Pattern.compile(parcelsRegex);
         Matcher matcher = pattern.matcher(fileContent);
 
-        final String[] level = new String[3];
         return matcher.results().map(MatchResult::group)
                 .map(parcelStr -> parcelStr.split("\\r\\n"))
                 .map(parcelLevel -> {
-                    switch (parcelLevel.length) {
-                        case 1:
-                            level[0] = parcelLevel[0];
-                            level[1] = "";
-                            level[2] = "";
-                            break;
-                        case 2:
-                            level[0] = parcelLevel[1];
-                            level[1] = parcelLevel[0];
-                            level[2] = "";
-                            break;
-                        case 3:
-                            level[0] = parcelLevel[2];
-                            level[1] = parcelLevel[1];
-                            level[2] = parcelLevel[0];
-                            break;
+                    char[][] parcelForm = new char[parcelLevel.length][parcelLevel[parcelLevel.length - 1].length()];
+                    for (int i = parcelLevel.length - 1; i >= 0; i--) {
+                        for (int j = 0; j < parcelLevel[i].length(); j++) {
+                            parcelForm[parcelLevel.length - 1 - i][j] = parcelLevel[i].charAt(j);
+                        }
                     }
                     return Parcel.builder()
-                            .level1(level[0])
-                            .level2(level[1])
-                            .level3(level[2])
                             .height(parcelLevel.length)
-                            .width(level[0].length())
+                            .width(parcelForm[0].length)
+                            .form(parcelForm)
                             .build();
                 })
                 .collect(Collectors.toList());

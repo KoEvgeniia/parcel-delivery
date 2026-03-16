@@ -10,14 +10,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TruckParcelLoaderOneToOne implements TruckParcelLoader {
+    final int TRUCK_HEIGHT = 6;
+    final int TRUCK_WIDTH = 6;
     public List<Truck> loadTruck(List<Parcel> parcels) {
         return parcels.stream().map(parcel -> Truck.builder()
-                .level1(String.format("%-6s", parcel.getLevel1()))
-                .level2(String.format("%-6s", parcel.getLevel2()))
-                .level3(String.format("%-6s", parcel.getLevel3()))
-                .level4(String.format("%-6s", ""))
-                .level5(String.format("%-6s", ""))
-                .level6(String.format("%-6s", ""))
+                .truckSpace(parcel.getForm())
+                .width(TRUCK_WIDTH)
+                .height(TRUCK_HEIGHT)
                 .build()).toList();
     }
 

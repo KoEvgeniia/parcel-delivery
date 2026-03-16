@@ -1,7 +1,8 @@
 package javacourse;
 
 import javacourse.controller.ConsoleController;
-import javacourse.service.TruckParcelLoaderTower;
+import javacourse.factory.LoaderFactory;
+import javacourse.service.LoaderType;
 import javacourse.util.CsvParser;
 import javacourse.util.CsvReader;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ public class Main {
 
     private static void start() {
         ConsoleController consoleController = new ConsoleController(
-                new TruckParcelLoaderTower(),
+                new LoaderFactory().createTruckParcelLoader(LoaderType.TOWER),
                 new CsvParser(new CsvReader()));
         consoleController.listen();
     }

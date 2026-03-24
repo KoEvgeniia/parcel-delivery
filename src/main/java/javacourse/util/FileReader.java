@@ -6,20 +6,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
-public class CsvReader {
+public class FileReader {
 
     public String readAll(String filePath) {
         try {
             Path path = Path.of(filePath);
             if (Files.exists(path)) {
-                log.info("Чтение файла {}", filePath);
+                log.info("Reading file {}", filePath);
                 return Files.readString(path);
             } else {
-                log.warn("Файл {} не найден", filePath);
+                log.warn("File {} not found", filePath);
                 return "";
             }
         } catch (Exception e) {
-            log.error("Ошибка обработки файла {}",e.getMessage());
+            log.error("Error processing file {}", e.getMessage());
             return "";
         }
     }

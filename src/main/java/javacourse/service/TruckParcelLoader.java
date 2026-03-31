@@ -6,6 +6,7 @@ import javacourse.domain.Truck;
 import java.util.List;
 
 public interface TruckParcelLoader {
-    List<Truck> loadTruck(List<Parcel> parcels);
+    List<Truck> loadTruck(List<Parcel> parcels, Long truckCount);
+
     void showTrucks(List<Truck> trucks);
 }

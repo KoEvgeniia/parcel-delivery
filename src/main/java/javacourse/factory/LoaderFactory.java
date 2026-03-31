@@ -1,6 +1,6 @@
 package javacourse.factory;
 
-import javacourse.service.LoaderType;
+import javacourse.domain.LoaderType;
 import javacourse.service.TruckParcelLoader;
 import javacourse.service.TruckParcelLoaderOneToOne;
 import javacourse.service.TruckParcelLoaderTower;

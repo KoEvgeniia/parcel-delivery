@@ -2,16 +2,31 @@ package javacourse.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class Truck {
-    private char[][] truckSpace;
+    private Character[][] truckSpace;
     private int width;
     private int height;
 
     @Override
     public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = truckSpace.length - 1; i >= 0; i--) {
+            for (int j = 0; j < width; j++) {
+                if (truckSpace[i].length > j && truckSpace[i][j] != null) {
+                    str.append(truckSpace[i][j]);
+                }
+            }
+            str.append("\r\n");
+        }
+        return str.toString();
+    }
+
+    public String toStringFormat() {
         StringBuilder str = new StringBuilder();
         String format = "%-" + width + "s";
 
@@ -24,7 +39,7 @@ public class Truck {
         for (int i = truckSpace.length - 1; i >= 0; i--) {
             str.append("+");
             for (int j = 0; j < width; j++) {
-                if (truckSpace[i].length > j && truckSpace[i][j] != '\u0000') {
+                if (truckSpace[i].length > j && truckSpace[i][j] != null) {
                     str.append(truckSpace[i][j]);
                 } else {
                     str.append(' ');

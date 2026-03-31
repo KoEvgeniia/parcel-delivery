@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.Truck;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class TruckParser {
     private final ObjectMapper objectMapper;
@@ -21,7 +23,7 @@ public class TruckParser {
             trucks = objectMapper.readValue(content, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            e.getMessage();
+           log.error("Error while parsing file: {}", e.getMessage());
         }
 
         return trucks;

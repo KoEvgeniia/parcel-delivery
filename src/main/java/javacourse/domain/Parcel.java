@@ -8,5 +8,5 @@ import lombok.Data;
 public class Parcel {
     private int height;
     private int width;
-    private String[][] form;
+    private Character[][] form;
 }

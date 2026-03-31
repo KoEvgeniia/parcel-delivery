@@ -15,7 +15,7 @@ class ParcelParserTest {
                 777
                 7777""";
         assertThat(parcelParser.parse(content)).containsExactly(
-                Parcel.builder().form(new String[][]{{"7", "7", "7", "7"}, {"7", "7", "7", null}}).width(4).height(2).build()
+                Parcel.builder().form(new Character[][]{{'7', '7', '7', '7'}, {'7', '7', '7', null}}).width(4).height(2).build()
         );
     }
 
@@ -30,9 +30,9 @@ class ParcelParserTest {
                 999
                 1""";
         assertThat(parcelParser.parse(content)).containsExactlyInAnyOrder(
-                Parcel.builder().form(new String[][]{{"7", "7", "7", "7"}, {"7", "7", "7", null}}).width(4).height(2).build(),
-                Parcel.builder().form(new String[][]{{"9", "9", "9"}, {"9", "9", "9"}, {"9", "9", "9"}}).width(3).height(3).build(),
-                Parcel.builder().form(new String[][]{{"1"}}).width(1).height(1).build()
+                Parcel.builder().form(new Character[][]{{'7', '7', '7', '7'}, {'7', '7', '7', null}}).width(4).height(2).build(),
+                Parcel.builder().form(new Character[][]{{'9', '9', '9'}, {'9', '9', '9'}, {'9', '9', '9'}}).width(3).height(3).build(),
+                Parcel.builder().form(new Character[][]{{'1'}}).width(1).height(1).build()
         );
     }
 

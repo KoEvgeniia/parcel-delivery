@@ -8,7 +8,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class Truck {
-    private String[][] truckSpace;
+    private Character[][] truckSpace;
     private int width;
     private int height;
 

@@ -17,7 +17,7 @@ class TruckParserTest {
                   "height" : 6
                 } ]""";
         assertThat(truckParser.parse(content)).containsExactly(
-                Truck.builder().truckSpace(new String[][]{{"7", "7", "7", "7", null, null}, {"7", "7", "7", null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}}).width(6).height(6).build()
+                Truck.builder().truckSpace(new Character[][]{{'7', '7', '7', '7', null, null}, {'7', '7', '7', null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}, {null, null, null, null, null, null}}).width(6).height(6).build()
         );
     }
 
@@ -35,8 +35,8 @@ class TruckParserTest {
                   "height" : 6
                 } ]\s""";
         assertThat(truckParser.parse(content)).containsExactlyInAnyOrder(
-                Truck.builder().truckSpace(new String[][]{{"5", "5", "5", "5", "5", null}, {"7", "7", "7", "7", null, null}, {"7", "7", "7", null, null, null}, {"9", "9", "9", null, null, null}, {"9", "9", "9", null, null, null}, {"9", "9", "9", null, null, null}}).width(6).height(6).build(),
-                Truck.builder().truckSpace(new String[][]{{"6", "6", "6", null, null, null}, {"6", "6", "6", null, null, null}, {"3", "3", "3", null, null, null}, {"1", null, null, null, null, null}, {"1", null, null, null, null, null}, {null, null, null, null, null, null}}).width(6).height(6).build()
+                Truck.builder().truckSpace(new Character[][]{{'5', '5', '5', '5', '5', null}, {'7', '7', '7', '7', null, null}, {'7', '7', '7', null, null, null}, {'9', '9', '9', null, null, null}, {'9', '9', '9', null, null, null}, {'9', '9', '9', null, null, null}}).width(6).height(6).build(),
+                Truck.builder().truckSpace(new Character[][]{{'6', '6', '6', null, null, null}, {'6', '6', '6', null, null, null}, {'3', '3', '3', null, null, null}, {'1', null, null, null, null, null}, {'1', null, null, null, null, null}, {null, null, null, null, null, null}}).width(6).height(6).build()
         );
     }
 

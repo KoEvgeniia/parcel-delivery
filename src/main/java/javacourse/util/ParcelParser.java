@@ -23,10 +23,10 @@ public class ParcelParser {
         return matcher.results().map(MatchResult::group)
                 .map(parcelStr -> parcelStr.split("\\r?\\n"))
                 .map(parcelLevel -> {
-                    String[][] parcelForm = new String[parcelLevel.length][parcelLevel[parcelLevel.length - 1].length()];
+                    Character[][] parcelForm = new Character[parcelLevel.length][parcelLevel[parcelLevel.length - 1].length()];
                     for (int i = parcelLevel.length - 1; i >= 0; i--) {
                         for (int j = 0; j < parcelLevel[i].length(); j++) {
-                            parcelForm[parcelLevel.length - 1 - i][j] = String.valueOf(parcelLevel[i].charAt(j));
+                            parcelForm[parcelLevel.length - 1 - i][j] = parcelLevel[i].charAt(j);
                         }
                     }
                     return Parcel.builder()

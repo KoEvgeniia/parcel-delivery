@@ -17,16 +17,16 @@ public class TruckParcelLoaderTower implements TruckParcelLoader {
         List<Truck> trucks = new ArrayList<>();
         int height = TRUCK_HEIGHT_START_POSITION;
         int width = TRUCK_WIDTH;
-        String[][] truckSpace = new String[TRUCK_HEIGHT][TRUCK_WIDTH];
+        Character[][] truckSpace = new Character[TRUCK_HEIGHT][TRUCK_WIDTH];
         List<Parcel> sortedParcels = parcels.stream().sorted(Comparator.comparingInt(Parcel::getHeight).reversed()).sorted(Comparator.comparingInt(Parcel::getWidth).reversed()).toList();
         for (Parcel parcel : sortedParcels) {
             if (height + parcel.getHeight() > TRUCK_HEIGHT || parcel.getWidth() / 2 > width) {
                 trucks.add(Truck.builder().truckSpace(truckSpace).width(TRUCK_WIDTH).height(TRUCK_HEIGHT).build());
-                truckSpace = new String[TRUCK_HEIGHT][TRUCK_WIDTH];
+                truckSpace = new Character[TRUCK_HEIGHT][TRUCK_WIDTH];
                 height = TRUCK_HEIGHT_START_POSITION;
             }
             for (int i = 0; i < parcel.getForm().length; i++) {
-                String[][] from = parcel.getForm();
+                Character[][] from = parcel.getForm();
                 for (int j = 0; j < from[i].length; j++) {
                     truckSpace[height + i][j] = from[i][j];
                 }

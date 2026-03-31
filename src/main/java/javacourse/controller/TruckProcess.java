@@ -5,7 +5,7 @@ import javacourse.domain.InputParm;
 import javacourse.domain.Parcel;
 import javacourse.domain.Truck;
 import javacourse.service.TruckParcelUnloader;
-import javacourse.util.FileDownloader;
+import javacourse.util.FileWriter;
 import javacourse.util.FileReader;
 import javacourse.util.TruckParser;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class TruckProcess implements ProcessController {
     private final TruckParser truckParser;
-    private final FileDownloader fileDownloader;
+    private final FileWriter<Parcel> fileWriter;
     private final ObjectMapper mapper;
 
     public void process(InputParm inputParm) {
@@ -36,7 +35,7 @@ public class TruckProcess implements ProcessController {
                 try {
                     TruckParcelUnloader truckUnloader = new TruckParcelUnloader();
                     List<Parcel> parcels = truckUnloader.unloadTruck(trucks);
-                    fileDownloader.unload(Collections.singletonList(parcels), inputParm.getFilePath().getParent().toString(), mapper);
+                    fileWriter.unload(parcels, inputParm.getFilePath().getParent(), mapper);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }

@@ -17,13 +17,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Processes the unloading of parcels from trucks
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class TruckProcess implements ProcessController {
     private final TruckParser truckParser;
     private final FileWriter<Parcel> fileWriter;
     private final ObjectMapper mapper;
+    private final Pattern UNLOAD_COMMAND_PATTERN = Pattern.compile("unload -infile (\".*\") -outfile (\".*\") ?(-withcount)?");
 
+    /**
+     * Processes the unloading of parcels from trucks
+     * @param inputParm An object with parameters for processing: file path, list of text parcels, load type, output type, etc
+     */
     public void process(InputParm inputParm) {
         String filePath = inputParm.getFilePath().toAbsolutePath().toString();
         List<Truck> trucks = truckParser.parse(new FileReader().readAll(filePath));
@@ -35,7 +43,7 @@ public class TruckProcess implements ProcessController {
                 try {
                     TruckParcelUnloader truckUnloader = new TruckParcelUnloader();
                     List<Parcel> parcels = truckUnloader.unloadTruck(trucks);
-                    fileWriter.unload(parcels, inputParm.getFilePath().getParent(), mapper);
+                    fileWriter.unload(parcels, inputParm, mapper);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }
@@ -43,24 +51,33 @@ public class TruckProcess implements ProcessController {
         }
     }
 
-    public void consoleInfo() {
-        System.out.println("""
-                Enter the file path in the format:
-                'import {file path}'
-                For example: 'import C:\\truck.json'""");
-    }
-
-    public Pattern fileComandPattern() {
-        return Pattern.compile("import (.+\\..+)");
-    }
-
+    /**
+     * Gets an object with input parameters from a command
+     * @param matcher Matcher with input command text for parsing incoming data
+     * @return An object with incoming parameters
+     */
     public InputParm getInputParm(Matcher matcher) {
-        String filePath = matcher.group(1);
+        String filePath = matcher.group(1).replace("\"", "").trim();
         Path path = Paths.get(filePath);
+
+        String fileName = matcher.group(2).replace("\"", "").trim();
+        boolean withCount = matcher.group(3) != null && !matcher.group(3).isEmpty();
+
         return InputParm.builder()
                 .filePath(path)
                 .truckCount(null)
                 .loaderType(null)
+                .fileName(fileName)
+                .withCount(withCount)
                 .build();
+    }
+
+    /**
+     * Gets a matcher from an incoming command
+     * @param command Incoming command text
+     * @return Matcher for easy parsing of incoming commands
+     */
+    public Matcher getMatcher(String command) {
+        return UNLOAD_COMMAND_PATTERN.matcher(command);
     }
 }

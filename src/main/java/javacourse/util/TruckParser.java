@@ -9,11 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * Utility for parsing a line with trucks
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class TruckParser {
     private final ObjectMapper objectMapper;
 
+    /**
+     * Parses a line with trucks
+     * @param content line with content
+     * @return list of trucks
+     */
     public List<Truck> parse(String content) {
         if (content == null || content.isEmpty()) {
             return null;

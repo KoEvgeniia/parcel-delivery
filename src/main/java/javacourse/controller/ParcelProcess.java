@@ -3,6 +3,7 @@ package javacourse.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.*;
 import javacourse.exception.LoadCommandIncorrectException;
+import javacourse.exception.ProcessCommandException;
 import javacourse.factory.LoaderFactory;
 import javacourse.service.TruckParcelLoader;
 import javacourse.util.FileWriter;
@@ -34,43 +35,48 @@ public class ParcelProcess implements ProcessController {
 
     /**
      * Processes the loading of parcels into trucks
+     *
      * @param inputParm An object with parameters for processing: file path, list of text parcels, load type, output type, etc
+     * @return success message
      */
-    public void process(InputParm inputParm) {
+    public String process(InputParm inputParm) {
         String content = "";
-        if (inputParm.getFilePath() != null) {
-            String filePath = inputParm.getFilePath().toAbsolutePath().toString();
-            content = new FileReader().readAll(filePath);
-        } else if (inputParm.getParcelsText() != null && !inputParm.getParcelsText().isEmpty()) {
-            content = inputParm.getParcelsText();
-        }
+        String successMessage = "";
+        try {
+            if (inputParm.getFilePath() != null) {
+                String filePath = inputParm.getFilePath().toAbsolutePath().toString();
+                content = new FileReader().readAll(filePath);
+            } else if (inputParm.getParcelsText() != null && !inputParm.getParcelsText().isEmpty()) {
+                content = inputParm.getParcelsText();
+            }
 
-        List<Parcel> parcels = parcelParser.parse(content);
-        if (parcels != null) {
-            if (parcels.isEmpty()) {
-                log.warn("Empty parcel list");
-            } else {
-                log.info("The list of parcels has been received");
-                try {
+            List<Parcel> parcels = parcelParser.parse(content);
+            if (parcels != null) {
+                if (parcels.isEmpty()) {
+                    throw new ProcessCommandException("Empty parcel list");
+                } else {
+                    log.info("The list of parcels has been received");
                     TruckParcelLoader truckParcelLoader = loaderFactory.createTruckParcelLoader(inputParm.getLoaderType());
                     List<Truck> trucks = truckParcelLoader.loadTruck(parcels, inputParm.getTruckCount());
                     switch (inputParm.getOutType()) {
                         case LoadParcelOutType.TEXT:
-                            truckParcelLoader.showTrucks(trucks);
+                            successMessage = truckParcelLoader.showTrucks(trucks);
                             break;
                         case LoadParcelOutType.JSON_FILE:
-                            fileWriter.unload(trucks, inputParm, mapper);
+                            successMessage = fileWriter.unload(trucks, inputParm, mapper);
                             break;
                     }
-                } catch (Exception e) {
-                    log.error(e.getMessage());
                 }
             }
+            return successMessage;
+        } catch (Exception e) {
+            throw new ProcessCommandException(e.getMessage());
         }
     }
 
     /**
      * Gets an object with input parameters from a command
+     *
      * @param matcher Matcher with input command text for parsing incoming data
      * @return An object with incoming parameters
      */
@@ -124,6 +130,7 @@ public class ParcelProcess implements ProcessController {
 
     /**
      * Gets a matcher from an incoming command
+     *
      * @param command Incoming command text
      * @return Matcher for easy parsing of incoming commands
      */

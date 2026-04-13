@@ -21,7 +21,8 @@ public class TruckParcelLoaderTower implements TruckParcelLoader {
 
     /**
      * Loads trucks
-     * @param parcels list of parcels for loading
+     *
+     * @param parcels    list of parcels for loading
      * @param truckCount number of trucks
      * @return list of trucks
      */
@@ -59,9 +60,13 @@ public class TruckParcelLoaderTower implements TruckParcelLoader {
 
     /**
      * Shows trucks
+     *
      * @param trucks list of trucks
+     * @return truck composition in text format
      */
-    public void showTrucks(List<Truck> trucks) {
-        trucks.forEach(truck ->  log.info(truck.toStringFormat()));
+    public String showTrucks(List<Truck> trucks) {
+        StringBuilder sb = new StringBuilder();
+        trucks.forEach(truck -> sb.append(truck.toStringFormat()));
+        return sb.toString();
     }
 }

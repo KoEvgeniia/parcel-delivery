@@ -19,19 +19,18 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
 @Slf4j
 public class Main {
-    public static void main(String[] args) throws TelegramApiException {
+    public static void main(String[] args) {
         log.info("Starting...");
         Main.start();
     }
 
-    private static void start() throws TelegramApiException {
+    private static void start() {
         ObjectMapper mapper = new ObjectMapper();
         ParcelHandler parcelHandler = new ParcelHandler(new ParcelRepository());
         TruckProcess truckProcess = new TruckProcess(new TruckParser(mapper), new ParcelWriter(), mapper);
@@ -59,8 +58,8 @@ public class Main {
                 ConsoleController consoleController = new ConsoleController(commandController);
                 consoleController.listen();
             }
-        } catch (IOException ex) {
-            log.error(ex.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package javacourse.util;
 
+import javacourse.exception.ReadFileException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -23,12 +24,10 @@ public class FileReader {
                 log.info("Reading file {}", filePath);
                 return Files.readString(path);
             } else {
-                log.warn("File {} not found", filePath);
-                return "";
+                throw new ReadFileException("File " + filePath + " not found");
             }
         } catch (Exception e) {
-            log.error("Error processing file {}", e.getMessage());
-            return "";
+            throw new ReadFileException("Error processing file " + e.getMessage());
         }
     }
 }

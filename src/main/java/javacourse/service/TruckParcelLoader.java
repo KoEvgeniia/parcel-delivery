@@ -11,7 +11,8 @@ import java.util.List;
 public interface TruckParcelLoader {
     /**
      * Loads trucks
-     * @param parcels list of parcels for loading
+     *
+     * @param parcels    list of parcels for loading
      * @param truckCount number of trucks
      * @return list of trucks
      */
@@ -19,7 +20,9 @@ public interface TruckParcelLoader {
 
     /**
      * Shows trucks
+     *
      * @param trucks list of trucks
+     * @return truck composition in text format
      */
-    void showTrucks(List<Truck> trucks);
+    String showTrucks(List<Truck> trucks);
 }

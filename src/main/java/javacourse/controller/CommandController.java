@@ -5,12 +5,12 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import javacourse.domain.InputDataType;
 import javacourse.domain.Parcel;
+import javacourse.dto.CommandResultDto;
 import javacourse.service.ParcelHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +28,13 @@ public class CommandController {
 
     /**
      * Processes entered commands
+     *
      * @param command entered command
-     * @return command processing log
+     * @return dto with command result info
      */
-    public String command(String command) {
+    public CommandResultDto command(String command) {
         Matcher matcher = INPUT_DATA_TYPE_COMMAND_PATTERN.matcher(command);
-        StringBuilder sb = new StringBuilder();
+        CommandResultDto result = CommandResultDto.builder().build();
         if (matcher.matches()) {
             Logger logbackLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
             ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -45,26 +46,29 @@ public class CommandController {
                     case LOAD -> {
                         Matcher matcherLoad = parcelProcess.getMatcher(command);
                         if (matcherLoad != null && matcherLoad.matches()) {
-                            parcelProcess.process(parcelProcess.getInputParm(matcherLoad));
+                            result.setMessage(parcelProcess.process(parcelProcess.getInputParm(matcherLoad)));
                         } else {
-                            invalidCommandLog();
+                            result.setDebug(invalidCommandText());
                         }
                     }
                     case UNLOAD -> {
                         Matcher matcherUnload = truckProcess.getMatcher(command);
                         if (matcherUnload != null && matcherUnload.matches()) {
-                            truckProcess.process(truckProcess.getInputParm(matcherUnload));
+                            result.setMessage(truckProcess.process(truckProcess.getInputParm(matcherUnload)));
                         } else {
-                            invalidCommandLog();
+                            result.setDebug(invalidCommandText());
                         }
                     }
-                    case FINDALL ->
-                            parcelHandler.findAll().forEach(parcel -> log.info(parcel.toString()));
+                    case FINDALL -> {
+                        StringBuilder sb = new StringBuilder();
+                        parcelHandler.findAll().forEach(parcel -> sb.append(parcel.toString()));
+                        result.setMessage(sb.toString());
+                    }
                     case FIND -> {
                         String parcelName = command.replace(matcher.group(1), "").trim();
                         parcelName = parcelName.replace("\"", "").trim();
 
-                        log.info(parcelHandler.findByName(parcelName).toString());
+                        result.setMessage(parcelHandler.findByName(parcelName).toString());
                     }
                     case CREATE -> {
                         Matcher matcherCreate = CREATE_COMMAND_PATTERN.matcher(command);
@@ -82,9 +86,9 @@ public class CommandController {
                                     .height(form.length)
                                     .width(parcelForm[0].length)
                                     .build();
-                            log.info(parcelHandler.create(parcel).toString());
+                            result.setMessage(parcelHandler.create(parcel).toString());
                         } else {
-                            invalidCommandLog();
+                            result.setDebug(invalidCommandText());
                         }
                     }
 
@@ -93,27 +97,19 @@ public class CommandController {
                         parcelName = parcelName.replace("\"", "").trim();
 
                         parcelHandler.deleteByName(parcelName);
-                        log.info("{} deleted", parcelName);
+                        result.setMessage(parcelName + " deleted");
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + inputDataType);
                 }
             } catch (Exception e) {
+                result.setDebug(e.getMessage());
                 log.error(e.getMessage());
             }
-
-            List<ILoggingEvent> logs = listAppender.list;
-
-            for (ILoggingEvent event : logs) {
-                sb.append(event.getFormattedMessage()).append("\n");
-            }
-
-            listAppender.stop();
-            logbackLogger.detachAppender(listAppender);
         }
-        return sb.toString();
+        return result;
     }
 
-    private void invalidCommandLog() {
-        log.error("Invalid command");
+    private String invalidCommandText() {
+        return "Invalid command";
     }
 }

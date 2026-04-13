@@ -2,6 +2,7 @@ package javacourse.telegram;
 
 import javacourse.config.TelegramBotConfig;
 import javacourse.controller.CommandController;
+import javacourse.dto.CommandResultDto;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,7 +19,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * Builds telegram bot
-     * @param botConfig bot configuration
+     *
+     * @param botConfig         bot configuration
      * @param commandController input command controller
      */
     public TelegramBot(TelegramBotConfig botConfig, CommandController commandController) {
@@ -29,6 +31,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * Gets bot username
+     *
      * @return bot username
      */
     @Override
@@ -38,6 +41,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * Processes the entered text
+     *
      * @param update entered text
      */
     @Override
@@ -51,8 +55,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                     startCommandReceived(chatId);
                     break;
                 default:
-                    String result = commandController.command(messageText);
-                    sendMessage(chatId, result);
+                    CommandResultDto result = commandController.command(messageText);
+                    String resultText;
+                    if (!result.getMessage().isEmpty()) {
+                        resultText = result.getMessage();
+                    } else {
+                        resultText = result.getDebug();
+                    }
+                    sendMessage(chatId, resultText);
             }
         }
     }

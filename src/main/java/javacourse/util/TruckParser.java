@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.Truck;
+import javacourse.exception.TruckParserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +20,7 @@ public class TruckParser {
 
     /**
      * Parses a line with trucks
+     *
      * @param content line with content
      * @return list of trucks
      */
@@ -26,12 +28,12 @@ public class TruckParser {
         if (content == null || content.isEmpty()) {
             return null;
         }
-        List<Truck> trucks = null;
+        List<Truck> trucks;
         try {
             trucks = objectMapper.readValue(content, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-           log.error("Error while parsing file: {}", e.getMessage());
+            throw new TruckParserException("Error while parsing file: " + e.getMessage());
         }
 
         return trucks;

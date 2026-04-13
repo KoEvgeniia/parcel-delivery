@@ -1,5 +1,6 @@
 package javacourse.controller;
 
+import javacourse.dto.CommandResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,15 +19,22 @@ public class ConsoleController {
      */
     public void listen() {
         var scanner = new Scanner(System.in);
-        log.info("Enter command");
+        System.out.println("Enter command");
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             if (command.equals("exit")) {
                 System.exit(0);
             }
 
-            commandController.command(command);
-            log.info("Enter command");
+            CommandResultDto result = commandController.command(command);
+            String resultText;
+            if (!result.getMessage().isEmpty()) {
+                resultText = result.getMessage();
+            } else {
+                resultText = result.getDebug();
+            }
+            System.out.println(resultText);
+            System.out.println("Enter command");
         }
     }
 }

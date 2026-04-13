@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.InputParm;
 import javacourse.domain.Parcel;
 import javacourse.domain.Truck;
+import javacourse.exception.ProcessCommandException;
 import javacourse.service.TruckParcelUnloader;
 import javacourse.util.FileWriter;
 import javacourse.util.FileReader;
@@ -30,29 +31,34 @@ public class TruckProcess implements ProcessController {
 
     /**
      * Processes the unloading of parcels from trucks
+     *
      * @param inputParm An object with parameters for processing: file path, list of text parcels, load type, output type, etc
+     * @return success message
      */
-    public void process(InputParm inputParm) {
-        String filePath = inputParm.getFilePath().toAbsolutePath().toString();
-        List<Truck> trucks = truckParser.parse(new FileReader().readAll(filePath));
-        if (trucks != null) {
-            if (trucks.isEmpty()) {
-                log.warn("There are no trucks listed in file {}", filePath);
-            } else {
-                log.info("The list of trucks has been received");
-                try {
+    public String process(InputParm inputParm) {
+        try {
+            String filePath = inputParm.getFilePath().toAbsolutePath().toString();
+            List<Truck> trucks = truckParser.parse(new FileReader().readAll(filePath));
+            if (trucks != null) {
+                if (trucks.isEmpty()) {
+                    throw new ProcessCommandException("There are no trucks listed in file " + filePath);
+                } else {
+                    log.info("The list of trucks has been received");
+
                     TruckParcelUnloader truckUnloader = new TruckParcelUnloader();
                     List<Parcel> parcels = truckUnloader.unloadTruck(trucks);
-                    fileWriter.unload(parcels, inputParm, mapper);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
+                    return fileWriter.unload(parcels, inputParm, mapper);
                 }
             }
+            return "";
+        } catch (Exception e) {
+            throw new ProcessCommandException(e.getMessage());
         }
     }
 
     /**
      * Gets an object with input parameters from a command
+     *
      * @param matcher Matcher with input command text for parsing incoming data
      * @return An object with incoming parameters
      */
@@ -74,6 +80,7 @@ public class TruckProcess implements ProcessController {
 
     /**
      * Gets a matcher from an incoming command
+     *
      * @param command Incoming command text
      * @return Matcher for easy parsing of incoming commands
      */

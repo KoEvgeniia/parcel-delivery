@@ -3,6 +3,7 @@ package javacourse.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.InputParm;
 import javacourse.domain.Parcel;
+import javacourse.exception.FileWriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,19 +21,23 @@ import java.util.stream.Collectors;
 public class ParcelWriter implements FileWriter<Parcel> {
     /**
      * Writes file with parcels
-     * @param objects list of parcels ot trucks
+     *
+     * @param objects   list of parcels ot trucks
      * @param inputParm object with incoming parameters
-     * @param mapper class for working with JSON files
+     * @param mapper    class for working with JSON files
+     * @return success message
      */
-    public void unload(List<Parcel> objects, InputParm inputParm, ObjectMapper mapper) {
+    public String unload(List<Parcel> objects, InputParm inputParm, ObjectMapper mapper) {
         String downloadPath = inputParm.getFilePath().getParent().resolve(inputParm.getFileName()).toString();
         StringBuilder fileContent = new StringBuilder();
         try {
             fileContent.append(toStringParcels(objects, inputParm.isWithCount()));
             Files.writeString(Paths.get(downloadPath), fileContent);
-            log.info("A file with a list of parcels has been generated {}", downloadPath);
+            String successMessage = "A file with a list of parcels has been generated " + downloadPath;
+            log.info(successMessage);
+            return successMessage;
         } catch (Exception e) {
-            log.error("Error writing file:{}", e.getMessage());
+            throw new FileWriterException("Error writing file " + e.getMessage());
         }
     }
 

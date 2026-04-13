@@ -3,12 +3,14 @@ package javacourse.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.domain.Parcel;
 import javacourse.domain.Truck;
+import javacourse.exception.TruckParserException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TruckParserTest {
     private TruckParser truckParser;
@@ -163,6 +165,6 @@ class TruckParserTest {
                       "name" : "Parcel type 1"
                     } ]
                 } ]""";
-        assertThat(truckParser.parse(content)).isEqualTo(null);
+        assertThrows(TruckParserException.class, () -> truckParser.parse(content));
     }
 }

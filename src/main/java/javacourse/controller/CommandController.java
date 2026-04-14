@@ -1,15 +1,11 @@
 package javacourse.controller;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
 import javacourse.domain.InputDataType;
 import javacourse.domain.Parcel;
 import javacourse.dto.CommandResultDto;
 import javacourse.service.ParcelHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,10 +32,6 @@ public class CommandController {
         Matcher matcher = INPUT_DATA_TYPE_COMMAND_PATTERN.matcher(command);
         CommandResultDto result = CommandResultDto.builder().build();
         if (matcher.matches()) {
-            Logger logbackLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-            ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-            listAppender.start();
-            logbackLogger.addAppender(listAppender);
             InputDataType inputDataType = InputDataType.valueOf(matcher.group(1).toUpperCase());
             try {
                 switch (inputDataType) {

@@ -4,20 +4,32 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javacourse.controller.ParcelProcess;
 import javacourse.controller.TruckProcess;
 import javacourse.domain.InputDataType;
+import javacourse.repository.ParcelRepository;
+import javacourse.service.ParcelHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ProcessFactoryTest {
+    private ObjectMapper mapper;
+    private ParcelHandler parcelHandler;
+    private ProcessFactory processFactory;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new ObjectMapper();
+        parcelHandler = new ParcelHandler(new ParcelRepository());
+        processFactory = new ProcessFactory();
+    }
+
     @Test
     public void createProcessControllerTruck() {
-        ProcessFactory processFactory = new ProcessFactory();
-        assertThat(processFactory.createProcessController(InputDataType.TRUCK, new ObjectMapper())).isInstanceOf(TruckProcess.class);
+        assertThat(processFactory.createProcessController(InputDataType.UNLOAD, mapper, parcelHandler)).isInstanceOf(TruckProcess.class);
     }
 
     @Test
     public void createProcessControllerParcel() {
-        ProcessFactory processFactory = new ProcessFactory();
-        assertThat(processFactory.createProcessController(InputDataType.PARCEL, new ObjectMapper())).isInstanceOf(ParcelProcess.class);
+        assertThat(processFactory.createProcessController(InputDataType.LOAD, mapper, parcelHandler)).isInstanceOf(ParcelProcess.class);
     }
 }

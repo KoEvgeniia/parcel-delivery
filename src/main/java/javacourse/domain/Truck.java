@@ -4,6 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.List;
+
+/**
+ * Truck model
+ */
 @Data
 @Builder
 @Jacksonized
@@ -11,21 +16,12 @@ public class Truck {
     private Character[][] truckSpace;
     private int width;
     private int height;
+    private List<Parcel> parcels;
 
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-        for (int i = truckSpace.length - 1; i >= 0; i--) {
-            for (int j = 0; j < width; j++) {
-                if (truckSpace[i].length > j && truckSpace[i][j] != null) {
-                    str.append(truckSpace[i][j]);
-                }
-            }
-            str.append("\r\n");
-        }
-        return str.toString();
-    }
-
+    /**
+     * String representation of the truck
+     * @return string representation of the truck
+     */
     public String toStringFormat() {
         StringBuilder str = new StringBuilder();
         String format = "%-" + width + "s";
@@ -50,6 +46,9 @@ public class Truck {
         str.append("+");
         str.append("+".repeat(Math.max(0, width)));
         str.append("+\n");
+
+        parcels.stream().map(Parcel::toStringFormat).forEach(str::append);
+
         return str.toString();
     }
 }

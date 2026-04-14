@@ -1,27 +1,59 @@
 package javacourse.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import javacourse.domain.InputParm;
 import javacourse.domain.Parcel;
+import javacourse.exception.FileWriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+/**
+ * Utility for writing a file with parcels
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class ParcelWriter implements FileWriter<Parcel> {
-    public void unload(List<Parcel> objects, Path pathToFolder, ObjectMapper mapper) {
-        ObjectMapper copyMapper = mapper.copy();
-        copyMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        String downloadPath = pathToFolder.resolve("parcel.json").toString();
+    /**
+     * Writes file with parcels
+     *
+     * @param objects   list of parcels ot trucks
+     * @param inputParm object with incoming parameters
+     * @param mapper    class for working with JSON files
+     * @return success message
+     */
+    public String unload(List<Parcel> objects, InputParm inputParm, ObjectMapper mapper) {
+        String downloadPath = inputParm.getFilePath().getParent().resolve(inputParm.getFileName()).toString();
+        StringBuilder fileContent = new StringBuilder();
         try {
-            copyMapper.writeValue(new File(downloadPath), objects);
-            log.info("A file with a list of parcels has been generated {}", downloadPath);
+            fileContent.append(toStringParcels(objects, inputParm.isWithCount()));
+            Files.writeString(Paths.get(downloadPath), fileContent);
+            String successMessage = "A file with a list of parcels has been generated " + downloadPath;
+            log.info(successMessage);
+            return successMessage;
         } catch (Exception e) {
-            log.error("Error downloading file:{}", e.getMessage());
+            throw new FileWriterException("Error writing file " + e.getMessage());
         }
+    }
+
+    private String toStringParcels(List<Parcel> parcels, boolean withCount) {
+        StringBuilder str = new StringBuilder();
+
+        Map<String, Long> parcelsByTruck = parcels.stream().collect(Collectors.groupingBy(Parcel::getName, Collectors.counting()));
+        for (Map.Entry<String, Long> entry : parcelsByTruck.entrySet()) {
+            str.append("\"").append(entry.getKey()).append("\"");
+            if (withCount) {
+                str.append(";").append(entry.getValue()).append(System.lineSeparator());
+            } else {
+                str.append(System.lineSeparator());
+            }
+        }
+
+        return str.toString();
     }
 }
